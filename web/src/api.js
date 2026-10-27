@@ -1,6 +1,7 @@
 import { tr } from './i18n/index.jsx';
 // Ҳамаи муоширати бо API дар як ҷо.
-const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8081').replace(/\/$/, '');
+// VITE_API_URL холӣ (VITE_API_URL=) бошад, дархостҳо ба ҳамон сайт (/api) мераванд, ки proxy-и Vite онҳоро ба API мефиристад
+const BASE_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:8081').replace(/\/$/, '');
 
 const KEYS = { access: 'pp_access', refresh: 'pp_refresh', user: 'pp_user' };
 
