@@ -3,7 +3,7 @@ import { money } from '../utils/format.js';
 export default function FirmSharesCard({ title, firms }) {
   return (
     <section className="card">
-      <h3 className="card-title">🗂️ Тақсимоти маблағ ба фирмаҳо</h3>
+      <h3 className="card-title">Тақсимоти маблағ ба фирмаҳо</h3>
       <p className="card-sub">Пардохтҳо · {title}</p>
 
       {firms.length === 0 ? (
@@ -12,7 +12,7 @@ export default function FirmSharesCard({ title, firms }) {
         <ul className="rows">
           {firms.map((f) => (
             <li key={f.firmId} className="row row-firm">
-              <span>🏪 {f.firmName}</span>
+              <span>{f.firmName}</span>
               <strong className="green">{money(f.total)}</strong>
             </li>
           ))}

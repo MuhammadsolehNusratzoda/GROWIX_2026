@@ -74,7 +74,7 @@ function DebtsSection() {
       <section className="card debt-total">
         <div className="today-label">Қарзи умумӣ ба фирмаҳо</div>
         <div className={`today-amount ${data.totalDebt > 0 ? 'debt-red' : ''}`}>{money(data.totalDebt)}</div>
-        <div className="today-count">Қарз = дору гирифтем − пардохт кардем. Фурӯш қарзро худкор кам намекунад.</div>
+        <div className="today-count">Қарз = мол гирифтем − пардохт кардем. Фурӯш қарзро худкор кам намекунад.</div>
       </section>
 
       <section className="card">
@@ -93,7 +93,7 @@ function DebtsSection() {
         )}
         {!hasActivity && data.firms.length > 0 && (
           <p className="hint">
-            Қарзро ҳисоб кардан учун дар «Гирифтем» сабт кунед, ки аз фирма чӣ қадар дору гирифтед.
+            Қарзро ҳисоб кардан учун дар «Гирифтем» сабт кунед, ки аз фирма чӣ қадар мол гирифтед.
           </p>
         )}
       </section>
@@ -119,7 +119,7 @@ function FirmDebtRow({ f, d }) {
           <div className="hint">Аз фурӯши ин фирма ба фирма ҳоло надодаем: <strong>{money(f.soldNotPaid)}</strong></div>
         )}
         <button type="button" className="link-btn" onClick={() => setOpen((o) => !o)}>
-          {open ? 'Пинҳон кардан' : 'Кадом доруҳо фурӯхта шуд?'}
+          {open ? 'Пинҳон кардан' : 'Кадом маҳсулотҳо фурӯхта шуд?'}
         </button>
         {open && ledger.loading && <p className="state">Бор карда истодааст…</p>}
         {open && ledger.error && <div className="state state-error">{ledger.error}</div>}
@@ -139,7 +139,7 @@ function FirmDebtRow({ f, d }) {
   );
 }
 
-/* ---------------- Дору аз фирма гирифтем ---------------- */
+/* ---------------- Мол аз фирма гирифтем ---------------- */
 function PurchasesSection() {
   const { year, month, shift, isCurrent } = usePeriod();
   const [form, setForm] = useState({ firmId: '', amount: '', date: todayLocal(), invoice: '', note: '' });
@@ -178,7 +178,7 @@ function PurchasesSection() {
       return;
     }
     if (withProducts && lines.length === 0) {
-      setMessage({ type: 'error', text: 'Ақаллан як доруро ба рӯйхат илова кунед' });
+      setMessage({ type: 'error', text: 'Ақаллан як маҳсулотро ба рӯйхат илова кунед' });
       return;
     }
     if (!withProducts && !(amount > 0)) {
@@ -197,7 +197,7 @@ function PurchasesSection() {
         invoiceNumber: form.invoice.trim() || null,
         note: form.note.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Дору аз фирма сабт шуд ✓ (қарз зиёд шуд)' });
+      setMessage({ type: 'ok', text: 'Мол аз фирма сабт шуд (қарз зиёд шуд)' });
       setForm((f) => ({ ...f, amount: '', invoice: '', note: '' }));
       setLines([]);
       reload();
@@ -223,7 +223,7 @@ function PurchasesSection() {
   return (
     <>
       <form className="card form" onSubmit={handleSubmit}>
-        <h3 className="card-title">➕ Дору аз фирма гирифтем</h3>
+        <h3 className="card-title">Мол аз фирма гирифтем</h3>
 
         {!firms.loading && activeFirms.length === 0 && (
           <p className="empty">Фирма нест. Аввал дар «Фирмаҳо» фирма илова кунед.</p>
@@ -239,7 +239,7 @@ function PurchasesSection() {
         </label>
 
         <div className="segmented">
-          <button type="button" className={withProducts ? 'active' : ''} onClick={() => setWithProducts(true)}>Бо дору</button>
+          <button type="button" className={withProducts ? 'active' : ''} onClick={() => setWithProducts(true)}>Бо маҳсулот</button>
           <button type="button" className={!withProducts ? 'active' : ''} onClick={() => setWithProducts(false)}>Танҳо маблағ</button>
         </div>
 
@@ -247,7 +247,7 @@ function PurchasesSection() {
           <LineItems products={firmProducts.data ?? []} lines={lines} onChange={setLines} mode="purchase" />
         ) : (
           <label className="field">
-            Маблағи дору (сомонӣ)
+            Маблағи мол (сомонӣ)
             <input
               name="amount"
               type="number"
@@ -302,7 +302,7 @@ function PurchasesSection() {
             <strong>{money(total)}</strong>
           </div>
           {purchases.length === 0 ? (
-            <p className="empty">Дар ин моҳ дору гирифта нашудааст</p>
+            <p className="empty">Дар ин моҳ мол гирифта нашудааст</p>
           ) : (
             <ul className="records">
               {purchases.map((p) => (
@@ -362,7 +362,7 @@ function PaymentsSection() {
       return;
     }
     if (withProducts && lines.length === 0) {
-      setMessage({ type: 'error', text: 'Ақаллан як доруро ба рӯйхат илова кунед' });
+      setMessage({ type: 'error', text: 'Ақаллан як маҳсулотро ба рӯйхат илова кунед' });
       return;
     }
     if (!withProducts && !(amount > 0)) {
@@ -378,7 +378,7 @@ function PaymentsSection() {
         method: form.method,
         note: form.note.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Пардохт сабт шуд ✓' });
+      setMessage({ type: 'ok', text: 'Пардохт сабт шуд' });
       setForm((f) => ({ ...f, amount: '', note: '' }));
       reload();
     } catch (err) {
@@ -403,7 +403,7 @@ function PaymentsSection() {
   return (
     <>
       <form className="card form" onSubmit={handleSubmit}>
-        <h3 className="card-title">➕ Пардохт ба фирма</h3>
+        <h3 className="card-title">Пардохт ба фирма</h3>
 
         {!firms.loading && activeFirms.length === 0 && (
           <p className="empty">Фирма нест. Аввал дар «Рӯйхати фирмаҳо» фирма илова кунед.</p>
@@ -522,7 +522,7 @@ function FirmsSection() {
         phone: form.phone.trim() || null,
         address: form.address.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Фирма илова шуд ✓' });
+      setMessage({ type: 'ok', text: 'Фирма илова шуд' });
       setForm({ name: '', phone: '', address: '' });
       firms.reload();
     } catch (err) {
@@ -545,7 +545,7 @@ function FirmsSection() {
   return (
     <>
       <form className="card form" onSubmit={handleSubmit}>
-        <h3 className="card-title">➕ Фирмаи нав</h3>
+        <h3 className="card-title">Фирмаи нав</h3>
 
         <label className="field">
           Номи фирма
@@ -571,7 +571,7 @@ function FirmsSection() {
 
       {!firms.loading && !firms.error && firms.data && (
         <section className="card">
-          <h3 className="card-title">🏢 Фирмаҳо ({firms.data.length})</h3>
+          <h3 className="card-title">Фирмаҳо ({firms.data.length})</h3>
           {firms.data.length === 0 ? (
             <p className="empty">Фирма ҳанӯз нест</p>
           ) : (

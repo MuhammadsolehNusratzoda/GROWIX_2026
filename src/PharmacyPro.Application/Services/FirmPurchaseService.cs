@@ -94,7 +94,7 @@ public class FirmPurchaseService(
         foreach (var item in saved.Items)
             item.Product = products.First(p => p.Id == item.ProductId);
 
-        return Response<FirmPurchaseDto>.Success(saved.ToDto(), "Дору аз фирма сабт шуд", 201);
+        return Response<FirmPurchaseDto>.Success(saved.ToDto(), "Мол аз фирма сабт шуд", 201);
     }
 
     public async Task<Response<FirmPurchaseDto>> UpdateAsync(int id, UpdateFirmPurchaseDto dto)
@@ -131,7 +131,7 @@ public class FirmPurchaseService(
         var p = await repo.GetByIdAsync(id);
         if (p is null) return Response<bool>.Fail("Харид ёфт нашуд", 404);
 
-        // Агар аз ин дору аллакай фурӯхта шуда бошад, нест кардан анборро манфӣ мекунад
+        // Агар аз ин мол аллакай фурӯхта шуда бошад, нест кардан анборро манфӣ мекунад
         var items = await purchaseItems.Query().Where(i => i.FirmPurchaseId == id).ToListAsync();
         if (items.Count > 0)
         {
@@ -139,7 +139,7 @@ public class FirmPurchaseService(
             foreach (var g in items.GroupBy(i => i.ProductId))
             {
                 if (onHand[g.Key] - g.Sum(x => x.Quantity) < 0)
-                    return Response<bool>.Fail("Ин харидро нест кардан мумкин нест: қисми дору аллакай фурӯхта шудааст", 409);
+                    return Response<bool>.Fail("Ин харидро нест кардан мумкин нест: қисми мол аллакай фурӯхта шудааст", 409);
             }
         }
 

@@ -1,8 +1,9 @@
+import { LOGO_SRC } from '../logo.js';
 import { useState } from 'react';
 import { login } from '../api.js';
 
 export default function LoginPage({ onLoggedIn }) {
-  const [email, setEmail] = useState('admin@pharmacypro.tj');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,9 +24,9 @@ export default function LoginPage({ onLoggedIn }) {
 
   return (
     <div className="app login">
-      <div className="login-logo">💊</div>
-      <h1 className="login-title">PharmacyPro</h1>
-      <p className="login-subtitle">Ҳисоботи молиявии дорухона</p>
+      <div className="login-logo"></div>
+      <h1 className="login-title">GROWIX</h1>
+      <p className="login-subtitle">Smart Business Solutions</p>
 
       <form className="card login-form" onSubmit={handleSubmit}>
         <label>

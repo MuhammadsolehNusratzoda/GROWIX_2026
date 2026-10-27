@@ -6,7 +6,7 @@ export default function WeeklyChart({ month, weeks }) {
 
   return (
     <section className="card">
-      <h3 className="card-title">📊 Фурӯш аз рӯи ҳафтаҳо</h3>
+      <h3 className="card-title">Фурӯш аз рӯи ҳафтаҳо</h3>
 
       <div className="chart">
         {weeks.map((w) => {

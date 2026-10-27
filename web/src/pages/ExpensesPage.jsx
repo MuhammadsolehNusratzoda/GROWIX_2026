@@ -57,7 +57,7 @@ export default function ExpensesPage() {
         expenseDate: toApiDateTime(form.date),
         note: form.note.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Хароҷот сабт шуд ✓' });
+      setMessage({ type: 'ok', text: 'Хароҷот сабт шуд' });
       setForm((f) => ({ ...f, amount: '', note: '' }));
       reload();
     } catch (err) {
@@ -77,7 +77,7 @@ export default function ExpensesPage() {
       setNewCategory('');
       setForm((f) => ({ ...f, categoryId: String(created.id) }));
       categories.reload();
-      setMessage({ type: 'ok', text: `Категорияи «${created.name}» илова шуд ✓` });
+      setMessage({ type: 'ok', text: `Категорияи «${created.name}» илова шуд` });
     } catch (err) {
       setMessage({ type: 'error', text: errorText(err) });
     }
@@ -99,7 +99,7 @@ export default function ExpensesPage() {
     <>
       <section className="card">
         <form className="form" onSubmit={handleSubmit}>
-          <h3 className="card-title">➕ Хароҷоти нав</h3>
+          <h3 className="card-title">Хароҷоти нав</h3>
 
           <label className="field">
             Категория (Свет, Аренда, Маош, Барқ…)

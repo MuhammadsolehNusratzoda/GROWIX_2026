@@ -30,7 +30,7 @@ export default function ChangePasswordCard({ onSessionEnded }) {
 
   return (
     <form className="card form" onSubmit={handleSubmit}>
-      <h3 className="card-title">🔑 Иваз кардани парол</h3>
+      <h3 className="card-title">Иваз кардани парол</h3>
 
       <label className="field">
         Пароли ҳозира
@@ -47,7 +47,7 @@ export default function ChangePasswordCard({ onSessionEnded }) {
         <input name="confirmPassword" type="password" autoComplete="new-password"
           value={form.confirm} onChange={setField('confirm')} required />
       </label>
-      <p className="hint">Камаш 8 аломат, ҳадди аққал як рақам ва як ҳарфи калон (масалан Dorukhona2026).</p>
+      <p className="hint">Камаш 8 аломат, ҳадди аққал як рақам ва як ҳарфи калон (масалан Growix2026).</p>
 
       <Message message={message} />
       <button className="btn" type="submit" disabled={saving}>

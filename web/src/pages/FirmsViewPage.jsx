@@ -7,7 +7,7 @@ export default function FirmsViewPage() {
 
   return (
     <section className="card">
-      <h3 className="card-title">🏢 Фирмаҳо</h3>
+      <h3 className="card-title">Фирмаҳо</h3>
       {loading && <p className="state">Бор карда истодааст…</p>}
       {error && <div className="state state-error">{error}</div>}
       {firms && firms.length === 0 && <p className="empty">Фирма ҳанӯз нест</p>}

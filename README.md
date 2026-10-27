@@ -1,7 +1,9 @@
-# 💊 PharmacyPro
+<p align="center"><img src="docs/logo-full.png" alt="GROWIX - Smart Business Solutions" width="520" /></p>
 
-> **Pharmacy financial accounting REST API** built with ASP.NET Core, Clean Architecture and PostgreSQL.
-> Track daily sales, expenses and payments to suppliers, and get an instant monthly profit/loss report.
+# GROWIX
+
+> **Smart Business Solutions** — a financial accounting and inventory REST API for any retail business (clothing, footwear, household goods, groceries and more), built with ASP.NET Core, Clean Architecture and PostgreSQL.
+> Track sales, stock, expenses and payments to suppliers, and get an instant monthly profit/loss report.
 
 ![.NET](https://img.shields.io/badge/.NET-9-512BD4?logo=dotnet)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-Web%20API-5C2D91)
@@ -12,7 +14,7 @@
 
 ---
 
-## 📸 Preview
+## Preview
 
 ![Swagger UI](docs/swagger.png)
 
@@ -20,37 +22,37 @@
 
 ---
 
-## 🌐 About / Дар бораи лоиҳа / О проекте
+## About / Дар бораи лоиҳа / О проекте
 
 | Language | Description |
 |---|---|
-| 🇹🇯 **Тоҷикӣ** | **PharmacyPro** — барномаи ҳисоботи молиявии дорухона. Фурӯши рӯзона, хароҷот (свет, аренда, маош, барқ) ва пардохт ба фирмаҳоро сабт мекунад ва ҳисоботи моҳона бо фоида ё зиён медиҳад. |
-| 🇬🇧 **English** | **PharmacyPro** is a financial accounting backend for pharmacies. It records daily sales, operating expenses and payments to supplier firms, and produces monthly and weekly reports with net profit or loss. |
-| 🇷🇺 **Русский** | **PharmacyPro** — бэкенд для финансового учёта аптеки. Ведёт учёт ежедневных продаж, расходов и оплат поставщикам, формирует месячные и недельные отчёты с прибылью или убытком. |
+| 🇹🇯 **Тоҷикӣ** | **GROWIX** — барномаи ҳисоботи молиявӣ ва анбор барои ҳар гуна тиҷорат (либос, пойафзол, молу маҳсулоти рӯзгор ва ғайра). Фурӯши рӯзона, анбори маҳсулот, хароҷот (свет, аренда, маош, барқ) ва пардохт ба фирмаҳоро сабт мекунад ва ҳисоботи моҳона бо фоида ё зиён медиҳад. |
+| 🇬🇧 **English** | **GROWIX** is a financial accounting and inventory backend for any retail business. It records sales, stock, operating expenses and payments to supplier firms, and produces monthly and weekly reports with net profit or loss. |
+| 🇷🇺 **Русский** | **GROWIX** — бэкенд для финансового учёта и склада любого розничного бизнеса (одежда, обувь, товары для дома и т.д.). Ведёт учёт продаж, остатков, расходов и оплат поставщикам, формирует месячные и недельные отчёты с прибылью или убытком. |
 
 ---
 
-## ✨ Features
+## Features
 
-- 📊 **Monthly report**: revenue, paid to firms, operating expenses, total costs, net profit/loss
-- 📈 **Weekly sales chart** data (weeks 1–5 of the month)
-- 🏢 **Firms** management and payments per firm
-- 🧾 **Expenses** by category (Свет, Аренда, Маош, Барқ and custom)
-- 💰 **Sales** tracking with payment method (Cash / Card / Transfer)
-- 🔐 **JWT authentication** with **refresh token rotation** and reuse detection
-- 👥 **Role-based authorization** (Admin, Pharmacist)
-- 🔎 **Filtering and pagination** on all list endpoints
-- ⚡ **In-memory caching** for reports with automatic invalidation
-- 🔁 **Background services**: report cache warm-up, expired refresh token cleanup
-- 🛡️ Global exception handling, request logging, rate limiting on auth endpoints
-- 🕐 Timezone-aware reports (Asia/Dushanbe, UTC+5)
-- 🗑️ Soft delete for all financial data
-- 🐳 **Docker + docker-compose** (API + PostgreSQL with one command)
-- 📚 Swagger UI with Bearer authentication
+- **Monthly report**: revenue, paid to firms, operating expenses, total costs, net profit/loss
+- **Weekly sales chart** data (weeks 1–5 of the month)
+- **Firms** management and payments per firm
+- **Expenses** by category (Свет, Аренда, Маош, Барқ and custom)
+- **Sales** tracking with payment method (Cash / Card / Transfer)
+- **JWT authentication** with **refresh token rotation** and reuse detection
+- **Role-based authorization** (Admin, Seller)
+- **Filtering and pagination** on all list endpoints
+- **In-memory caching** for reports with automatic invalidation
+- **Background services**: report cache warm-up, expired refresh token cleanup
+- Global exception handling, request logging, rate limiting on auth endpoints
+- Timezone-aware reports (Asia/Dushanbe, UTC+5)
+- Soft delete for all financial data
+- **Docker + docker-compose** (API + PostgreSQL with one command)
+- Swagger UI with Bearer authentication
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -65,10 +67,10 @@
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-PharmacyPro/
+GROWIX/
 ├── src/
 │   ├── PharmacyPro.Domain/            # Entities, Enums, Constants (no dependencies)
 │   │   ├── Common/                    # BaseEntity
@@ -105,17 +107,27 @@ PharmacyPro/
 
 ---
 
-## 🗄️ Domain Model
+## Domain Model
 
 | Entity | Purpose |
 |---|---|
 | `Firm` | Supplier company |
 | `FirmPayment` | Payment made to a firm |
-| `Sale` | Revenue record |
+| `Sale` / `SaleItem` | Revenue record; items = which product, how many, at what price |
+| `Product` | A product that belongs to one supplier firm (purchase + sale price) |
+| `FirmPurchase` / `FirmPurchaseItem` | Goods received from a firm (increases stock and debt) |
 | `ExpenseCategory` | Свет, Аренда, Маош, Барқ, ... |
 | `Expense` | Operating expense |
-| `ApplicationUser` | Identity user (Admin / Pharmacist) |
+| `ApplicationUser` | Identity user (Admin / Seller) |
 | `RefreshToken` | Hashed refresh tokens |
+
+**Stock & debt**
+
+```
+OnHand(product) = Σ received quantity − Σ sold quantity
+Debt            = TotalPurchased − TotalPaid      (sales never reduce debt automatically)
+SoldNotPaid     = max(0, TotalSold − TotalPaid)   (sold goods of the firm not yet paid to it)
+```
 
 **Report formula**
 
@@ -126,7 +138,7 @@ NetProfit  = TotalRevenue − TotalCosts
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Auth
 
@@ -141,14 +153,18 @@ NetProfit  = TotalRevenue − TotalCosts
 
 ### Resources
 
-| Resource | Endpoints | Pharmacist | Admin |
+| Resource | Endpoints | Seller | Admin |
 |---|---|---|---|
 | Firms | `GET/POST/PUT/DELETE /api/firms` | Read | Full |
 | Expense categories | `GET/POST/PUT/DELETE /api/expense-categories` | Read | Full |
 | Sales | `GET/POST/PUT/DELETE /api/sales` | Read, Create | Full |
-| Expenses | `GET/POST/PUT/DELETE /api/expenses` | ✗ | Full |
-| Firm payments | `GET/POST/PUT/DELETE /api/firm-payments` | ✗ | Full |
-| Reports | `GET /api/reports/monthly`, `GET /api/reports/weekly` | ✗ | Full |
+| Expenses | `GET/POST/PUT/DELETE /api/expenses` |  | Full |
+| Firm payments | `GET/POST/PUT/DELETE /api/firm-payments` |  | Full |
+| Products | `GET/POST/PUT/DELETE /api/products` | Read | Full |
+| Stock | `GET /api/stock` (value per firm) |  | Read |
+| Firm ledger | `GET /api/firm-ledger/{firmId}` (products sold per firm) |  | Read |
+| Firm purchases / balances | `/api/firm-purchases`, `GET /api/firm-balances` |  | Full |
+| Reports | `GET /api/reports/monthly`, `GET /api/reports/weekly` |  | Full |
 
 ### Query parameters
 
@@ -191,7 +207,7 @@ Paged responses additionally include `pageNumber`, `pageSize`, `totalCount`, `to
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Option 1: Docker (recommended)
 
@@ -257,7 +273,7 @@ Swagger: `http://localhost:5124/swagger`
 On first start the app automatically:
 
 1. Applies EF Core migrations
-2. Creates roles `Admin` and `Pharmacist`
+2. Creates roles `Admin` and `Pharmacist` (the seller role; the internal name is kept for backward compatibility)
 3. Seeds the default admin user
 4. Seeds default expense categories (Свет, Аренда, Маош, Барқ)
 
@@ -270,7 +286,7 @@ dotnet ef database update -p src/PharmacyPro.Infrastructure -s src/PharmacyPro.A
 
 ---
 
-## 🔐 Security
+## Security
 
 - Passwords hashed by ASP.NET Core Identity, lockout after 5 failed attempts (15 min)
 - Short-lived access token (15 min) + refresh token (7 days)
@@ -283,7 +299,7 @@ dotnet ef database update -p src/PharmacyPro.Infrastructure -s src/PharmacyPro.A
 
 ---
 
-## ⚙️ Background Services
+## Background Services
 
 | Service | Interval | Job |
 |---|---|---|
@@ -292,7 +308,7 @@ dotnet ef database update -p src/PharmacyPro.Infrastructure -s src/PharmacyPro.A
 
 ---
 
-## 🕐 Date & Time Notes
+## Date & Time Notes
 
 - All dates are stored in **UTC**
 - Send dates with an offset: `2026-10-11T14:30:00+05:00`
@@ -301,17 +317,17 @@ dotnet ef database update -p src/PharmacyPro.Infrastructure -s src/PharmacyPro.A
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Docker + docker-compose (API + PostgreSQL)
 - [ ] Export reports to Excel / PDF
-- [ ] Inventory and medicine catalog
-- [ ] Mobile client (React Native / Flutter)
-- [ ] Multi-pharmacy (multi-tenant) support
+- [x] Product catalog, stock per firm, sold-products ledger per firm
+- [ ] Mobile app (React Native / Flutter)
+- [ ] Multi-branch (multi-tenant) support
 
 ---
 
-## 👤 Author
+## Author
 
 **Muhammadsoleh Nusratzoda**
 Back-end C#/.NET developer · Tajikistan
@@ -320,6 +336,6 @@ Skills: C#, ASP.NET Core, EF Core, PostgreSQL, JWT, Middleware, Clean Architectu
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.

@@ -11,7 +11,7 @@ export default function ProductsPage() {
     <>
       <div className="segmented">
         <button className={section === 'stock' ? 'active' : ''} onClick={() => setSection('stock')}>Анбор</button>
-        <button className={section === 'products' ? 'active' : ''} onClick={() => setSection('products')}>Дору</button>
+        <button className={section === 'products' ? 'active' : ''} onClick={() => setSection('products')}>Маҳсулот</button>
       </div>
       {section === 'stock' ? <StockSection /> : <ProductsSection />}
     </>
@@ -36,7 +36,7 @@ function StockSection() {
       {data.firms.length === 0 && <p className="empty">Анбор холӣ аст</p>}
       {data.firms.map((f) => (
         <section className="card" key={f.firmId}>
-          <h3 className="card-title">🏢 {f.firmName}</h3>
+          <h3 className="card-title">{f.firmName}</h3>
           <div className="list-total">
             <span>{f.totalQuantity} дона</span>
             <strong>{money(f.totalValueAtCost)}</strong>
@@ -76,7 +76,7 @@ function ProductsSection() {
     e.preventDefault();
     setMessage(null);
     if (!firmId) return setMessage({ type: 'error', text: 'Аввал дар «Фирмаҳо» фирма илова кунед' });
-    if (!form.name.trim()) return setMessage({ type: 'error', text: 'Номи доруро нависед' });
+    if (!form.name.trim()) return setMessage({ type: 'error', text: 'Номи маҳсулотро нависед' });
     setSaving(true);
     try {
       await createProduct({
@@ -85,7 +85,7 @@ function ProductsSection() {
         purchasePrice: Number(form.purchasePrice) || 0,
         salePrice: Number(form.salePrice) || 0,
       });
-      setMessage({ type: 'ok', text: 'Дору илова шуд ✓' });
+      setMessage({ type: 'ok', text: 'Маҳсулот илова шуд' });
       setForm((f) => ({ ...f, name: '', purchasePrice: '', salePrice: '' }));
       reload();
     } catch (err) {
@@ -108,7 +108,7 @@ function ProductsSection() {
   return (
     <>
       <form className="card form" onSubmit={handleSubmit}>
-        <h3 className="card-title">➕ Дори нав</h3>
+        <h3 className="card-title">Маҳсулоти нав</h3>
         <label className="field">
           Фирма
           <select name="firmId" value={firmId} onChange={setField('firmId')}>
@@ -118,7 +118,7 @@ function ProductsSection() {
           </select>
         </label>
         <label className="field">
-          Номи дору
+          Номи маҳсулот
           <input name="name" type="text" maxLength="150" value={form.name} onChange={setField('name')} />
         </label>
         <div className="field-row">
@@ -141,9 +141,9 @@ function ProductsSection() {
       {error && <div className="state state-error">{error}</div>}
       {products && (
         <section className="card">
-          <h3 className="card-title">💊 Доруҳо</h3>
+          <h3 className="card-title">Маҳсулотҳо</h3>
           {products.length === 0 ? (
-            <p className="empty">Дору ҳанӯз нест</p>
+            <p className="empty">Маҳсулот ҳанӯз нест</p>
           ) : (
             <ul className="records">
               {products.map((p) => (

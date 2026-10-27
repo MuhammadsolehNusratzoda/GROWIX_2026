@@ -2,7 +2,7 @@ using PharmacyPro.Domain.Common;
 
 namespace PharmacyPro.Domain.Entities;
 
-// Маҳсулот/дору. Ҳар маҳсулот ба як фирма тааллуқ дорад.
+// Маҳсулот (мол). Ҳар маҳсулот ба як фирма тааллуқ дорад.
 public class Product : BaseEntity
 {
     public string Name { get; set; } = null!;

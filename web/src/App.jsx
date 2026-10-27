@@ -10,6 +10,7 @@ import ProductsPage from './pages/ProductsPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import BottomNav from './components/BottomNav.jsx';
+import { LOGO_SRC } from './logo.js';
 import { tokenStore, setAuthFailureHandler, logout } from './api.js';
 
 export default function App() {
@@ -38,7 +39,7 @@ export default function App() {
 function MainApp({ user, onLogout, onSessionEnded }) {
   const isAdmin = Boolean(user.roles?.includes('Admin'));
 
-  // Admin: ҳама чиз. Корманд (Pharmacist): фурӯш, рӯйхати фирмаҳо, профил
+  // Admin: ҳама чиз. Корманд (фурӯшанда): фурӯш, рӯйхати фирмаҳо, профил
   const tabs = isAdmin
     ? ['report', 'sales', 'expenses', 'firms', 'products', 'users']
     : ['today', 'sales', 'firms', 'profile'];
@@ -48,10 +49,10 @@ function MainApp({ user, onLogout, onSessionEnded }) {
     <div className="app has-nav">
       <header className="topbar">
         <div className="topbar-brand">
-          <span className="topbar-logo">💊</span>
+          <span className="topbar-logo"></span>
           <div>
-            <div className="topbar-title">PharmacyPro</div>
-            <div className="topbar-sub">{user.fullName} · {isAdmin ? 'Admin' : 'Корманд'}</div>
+            <div className="topbar-title">GROWIX</div>
+            <div className="topbar-sub">{user.fullName} · {isAdmin ? 'Admin' : 'Фурӯшанда'}</div>
           </div>
         </div>
         <button className="btn-ghost" onClick={onLogout}>Баромадан</button>

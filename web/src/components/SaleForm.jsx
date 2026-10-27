@@ -23,7 +23,7 @@ export default function SaleForm({ showDate = true, onSaved }) {
     setMessage(null);
     const amount = Number(form.amount);
     if (withProducts && lines.length === 0) {
-      setMessage({ type: 'error', text: 'Ақаллан як доруро ба рӯйхат илова кунед' });
+      setMessage({ type: 'error', text: 'Ақаллан як маҳсулотро ба рӯйхат илова кунед' });
       return;
     }
     if (!withProducts && !(amount > 0)) {
@@ -41,7 +41,7 @@ export default function SaleForm({ showDate = true, onSaved }) {
         method: form.method,
         note: form.note.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Фурӯш сабт шуд ✓' });
+      setMessage({ type: 'ok', text: 'Фурӯш сабт шуд' });
       setForm((f) => ({ ...f, amount: '', note: '' }));
       setLines([]);
       products.reload();
@@ -66,10 +66,10 @@ export default function SaleForm({ showDate = true, onSaved }) {
 
   return (
     <form className="card form" onSubmit={handleSubmit}>
-      <h3 className="card-title">➕ Фурӯши нав</h3>
+      <h3 className="card-title">Фурӯши нав</h3>
 
       <div className="segmented">
-        <button type="button" className={withProducts ? 'active' : ''} onClick={() => setWithProducts(true)}>Бо дору</button>
+        <button type="button" className={withProducts ? 'active' : ''} onClick={() => setWithProducts(true)}>Бо маҳсулот</button>
         <button type="button" className={!withProducts ? 'active' : ''} onClick={() => setWithProducts(false)}>Танҳо маблағ</button>
       </div>
 

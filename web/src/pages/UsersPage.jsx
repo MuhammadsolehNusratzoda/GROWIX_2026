@@ -4,7 +4,7 @@ import Message from '../components/Message.jsx';
 import RecordRow from '../components/RecordRow.jsx';
 import ChangePasswordCard from '../components/ChangePasswordCard.jsx';
 
-const ROLE_LABELS = { Pharmacist: 'Корманд (фурӯшанда)', Admin: 'Admin (маъмур)' };
+const ROLE_LABELS = { Pharmacist: 'Фурӯшанда', Admin: 'Admin (маъмур)' };
 
 export default function UsersPage({ onSessionEnded }) {
   const [form, setForm] = useState({ fullName: '', email: '', password: '', role: 'Pharmacist' });
@@ -26,7 +26,7 @@ export default function UsersPage({ onSessionEnded }) {
         role: form.role,
       });
       setCreated((list) => [user, ...list]);
-      setMessage({ type: 'ok', text: `«${user.fullName}» илова шуд ✓` });
+      setMessage({ type: 'ok', text: `«${user.fullName}» илова шуд` });
       setForm({ fullName: '', email: '', password: '', role: form.role });
     } catch (err) {
       setMessage({ type: 'error', text: errorText(err) });
@@ -38,7 +38,7 @@ export default function UsersPage({ onSessionEnded }) {
   return (
     <>
       <form className="card form" onSubmit={handleSubmit}>
-        <h3 className="card-title">👥 Корманди нав</h3>
+        <h3 className="card-title">Корманди нав</h3>
 
         <label className="field">
           Ному насаб
@@ -55,7 +55,7 @@ export default function UsersPage({ onSessionEnded }) {
           <input name="password" type="text" autoComplete="off" minLength="8" value={form.password}
             onChange={setField('password')} required />
         </label>
-        <p className="hint">Камаш 8 аломат, як рақам ва як ҳарфи калон (масалан Dorukhona2026). Корманд баъдтар онро худаш иваз карда метавонад.</p>
+        <p className="hint">Камаш 8 аломат, як рақам ва як ҳарфи калон (масалан Growix2026). Корманд баъдтар онро худаш иваз карда метавонад.</p>
         <label className="field">
           Нақш
           <select name="role" value={form.role} onChange={setField('role')}>

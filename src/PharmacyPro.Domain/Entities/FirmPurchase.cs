@@ -2,7 +2,7 @@ using PharmacyPro.Domain.Common;
 
 namespace PharmacyPro.Domain.Entities;
 
-// Дору/мол, ки аз фирма гирифта шуд (қарз ба фирма меафзояд)
+// Мол, ки аз фирма гирифта шуд (қарз ба фирма меафзояд)
 public class FirmPurchase : BaseEntity
 {
     public int FirmId { get; set; }

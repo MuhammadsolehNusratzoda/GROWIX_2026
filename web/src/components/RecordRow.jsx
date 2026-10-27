@@ -8,7 +8,7 @@ export default function RecordRow({ title, subtitle, amount, amountClass = '', o
       {amount && <div className={`record-amount ${amountClass}`}>{amount}</div>}
       {onDelete && (
         <button type="button" className="icon-btn" onClick={onDelete} aria-label="Нест кардан">
-          🗑️
+          Нест
         </button>
       )}
     </li>

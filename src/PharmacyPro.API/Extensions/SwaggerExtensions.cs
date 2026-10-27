@@ -9,7 +9,7 @@ public static class SwaggerExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(o =>
         {
-            o.SwaggerDoc("v1", new OpenApiInfo { Title = "PharmacyPro API", Version = "v1" });
+            o.SwaggerDoc("v1", new OpenApiInfo { Title = "GROWIX API", Version = "v1" });
 
             o.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

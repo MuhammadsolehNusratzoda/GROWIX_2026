@@ -6,13 +6,13 @@ export default function DebtCard({ balances }) {
 
   return (
     <section className="card">
-      <h3 className="card-title">💳 Қарз ба фирмаҳо</h3>
+      <h3 className="card-title">Қарз ба фирмаҳо</h3>
       <div className="list-total">
         <span>Қарзи умумӣ</span>
         <strong className={balances.totalDebt > 0 ? 'debt-red' : 'green'}>{money(balances.totalDebt)}</strong>
       </div>
       {withDebt.length === 0 ? (
-        <p className="empty">Қарз нест ✓</p>
+        <p className="empty">Қарз нест</p>
       ) : (
         <ul className="records">
           {withDebt.map((f) => (

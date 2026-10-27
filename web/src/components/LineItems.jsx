@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { money } from '../utils/format.js';
 
-// Сатрҳои маҳсулот: кадом дору, чанд дона, бо кадом нарх.
+// Сатрҳои маҳсулот: кадом маҳсулот, чанд дона, бо кадом нарх.
 // mode='sale'     → нархи фурӯш, миқдор аз анбор зиёд шуда наметавонад
 // mode='purchase' → нархи харид
 export default function LineItems({ products, lines, onChange, mode }) {
@@ -39,13 +39,13 @@ export default function LineItems({ products, lines, onChange, mode }) {
     <div className="lines">
       {products.length === 0 ? (
         <p className="empty">
-          {mode === 'sale' ? 'Дору дар анбор нест' : 'Барои ин фирма маҳсулот нест. Аввал дар «Дору» илова кунед.'}
+          {mode === 'sale' ? 'Маҳсулот дар анбор нест' : 'Барои ин фирма маҳсулот нест. Аввал дар «Маҳсулот» илова кунед.'}
         </p>
       ) : (
         <>
           <label className="field">
-            Дору
-            <select aria-label="Дору" value={currentId} onChange={(e) => { setProductId(e.target.value); setPrice(''); }}>
+            Маҳсулот
+            <select aria-label="Маҳсулот" value={currentId} onChange={(e) => { setProductId(e.target.value); setPrice(''); }}>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}{mode === 'sale' ? ` (${p.quantityOnHand} дона)` : ''}
@@ -81,7 +81,7 @@ export default function LineItems({ products, lines, onChange, mode }) {
               </div>
               <div className="record-amount">{money(l.quantity * l.unitPrice)}</div>
               <button type="button" className="icon-btn" aria-label="Тоза кардан"
-                onClick={() => onChange(lines.filter((_, i) => i !== idx))}>🗑️</button>
+                onClick={() => onChange(lines.filter((_, i) => i !== idx))}>Нест</button>
             </li>
           ))}
         </ul>

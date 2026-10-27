@@ -3,7 +3,7 @@ import { money } from '../utils/format.js';
 export default function ExpensesCard({ title, categories, paidToFirms, total }) {
   return (
     <section className="card">
-      <h3 className="card-title">📄 ҲАРОҶОТ · {title}</h3>
+      <h3 className="card-title">ҲАРОҶОТ · {title}</h3>
 
       <ul className="rows">
         {categories.map((c, i) => (

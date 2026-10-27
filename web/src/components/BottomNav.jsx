@@ -1,12 +1,12 @@
 const LABELS = {
-  report: { icon: '📊', text: 'Ҳисобот' },
-  today: { icon: '🏠', text: 'Имрӯз' },
-  sales: { icon: '💰', text: 'Фурӯш' },
-  expenses: { icon: '🧾', text: 'Хароҷот' },
-  firms: { icon: '🏢', text: 'Фирмаҳо' },
-  products: { icon: '💊', text: 'Дору' },
-  users: { icon: '👥', text: 'Корбарон' },
-  profile: { icon: '👤', text: 'Профил' },
+  report: { text: 'Ҳисобот' },
+  today: { text: 'Имрӯз' },
+  sales: { text: 'Фурӯш' },
+  expenses: { text: 'Хароҷот' },
+  firms: { text: 'Фирмаҳо' },
+  products: { text: 'Маҳсулот' },
+  users: { text: 'Корбарон' },
+  profile: { text: 'Профил' },
 };
 
 export default function BottomNav({ tabs, active, onChange }) {
@@ -18,7 +18,6 @@ export default function BottomNav({ tabs, active, onChange }) {
           className={`nav-item ${active === key ? 'active' : ''}`}
           onClick={() => onChange(key)}
         >
-          <span className="nav-icon">{LABELS[key].icon}</span>
           <span className="nav-text">{LABELS[key].text}</span>
         </button>
       ))}
