@@ -1,8 +1,11 @@
+import LanguageSwitcher from '../components/LanguageSwitcher.jsx';
+import { useI18n } from '../i18n/index.jsx';
 import { LOGO_SRC } from '../logo.js';
 import { useState } from 'react';
 import { login } from '../api.js';
 
 export default function LoginPage({ onLoggedIn }) {
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,7 +27,8 @@ export default function LoginPage({ onLoggedIn }) {
 
   return (
     <div className="app login">
-      <div className="login-logo"></div>
+      <LanguageSwitcher className="login-lang" />
+      <img className="login-logo" src={LOGO_SRC} alt="GROWIX" />
       <h1 className="login-title">GROWIX</h1>
       <p className="login-subtitle">Smart Business Solutions</p>
 
@@ -40,7 +44,7 @@ export default function LoginPage({ onLoggedIn }) {
           />
         </label>
         <label>
-          Парол
+          {t('Парол')}
           <input
             type="password"
             value={password}
@@ -51,7 +55,7 @@ export default function LoginPage({ onLoggedIn }) {
         </label>
         {error && <div className="state state-error">{error}</div>}
         <button className="btn" type="submit" disabled={loading}>
-          {loading ? 'Интизор шавед…' : 'Ворид шудан'}
+          {loading ? t('Интизор шавед…') : t('Ворид шудан')}
         </button>
       </form>
     </div>

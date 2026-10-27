@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/index.jsx';
+import Icon from './Icon.jsx';
 import { useState } from 'react';
 import { money } from '../utils/format.js';
 
@@ -5,6 +7,7 @@ import { money } from '../utils/format.js';
 // mode='sale'     → нархи фурӯш, миқдор аз анбор зиёд шуда наметавонад
 // mode='purchase' → нархи харид
 export default function LineItems({ products, lines, onChange, mode }) {
+  const { t } = useI18n();
   const [productId, setProductId] = useState('');
   const [qty, setQty] = useState('1');
   const [price, setPrice] = useState('');
@@ -23,10 +26,10 @@ export default function LineItems({ products, lines, onChange, mode }) {
     if (!selected) return;
     const quantity = Number(qty);
     const unit = price === '' ? priceOf(selected) : Number(price);
-    if (!Number.isInteger(quantity) || quantity < 1) return setErr('Миқдор бояд адади бутун, ≥ 1 бошад');
-    if (!(unit >= 0)) return setErr('Нарх нодуруст аст');
+    if (!Number.isInteger(quantity) || quantity < 1) return setErr(t('Миқдор бояд адади бутун, ≥ 1 бошад'));
+    if (!(unit >= 0)) return setErr(t('Нарх нодуруст аст'));
     if (mode === 'sale' && usedOf(selected.id) + quantity > selected.quantityOnHand) {
-      return setErr(`Дар анбор «${selected.name}» танҳо ${selected.quantityOnHand} дона ҳаст`);
+      return setErr(t('Дар анбор «{name}» танҳо {n} дона ҳаст', { name: selected.name, n: selected.quantityOnHand }));
     }
     onChange([...lines, { productId: selected.id, name: selected.name, quantity, unitPrice: unit }]);
     setQty('1');
@@ -39,34 +42,34 @@ export default function LineItems({ products, lines, onChange, mode }) {
     <div className="lines">
       {products.length === 0 ? (
         <p className="empty">
-          {mode === 'sale' ? 'Маҳсулот дар анбор нест' : 'Барои ин фирма маҳсулот нест. Аввал дар «Маҳсулот» илова кунед.'}
+          {mode === 'sale' ? t('Маҳсулот дар анбор нест') : t('Барои ин фирма маҳсулот нест. Аввал дар «Маҳсулот» илова кунед.')}
         </p>
       ) : (
         <>
           <label className="field">
-            Маҳсулот
-            <select aria-label="Маҳсулот" value={currentId} onChange={(e) => { setProductId(e.target.value); setPrice(''); }}>
+            {t('Маҳсулот|one')}
+            <select aria-label={t('Маҳсулот|one')} value={currentId} onChange={(e) => { setProductId(e.target.value); setPrice(''); }}>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name}{mode === 'sale' ? ` (${p.quantityOnHand} дона)` : ''}
+                  {p.name}{mode === 'sale' ? ` (${p.quantityOnHand} ${t('дона')})` : ''}
                 </option>
               ))}
             </select>
           </label>
           <div className="field-row">
             <label className="field">
-              Миқдор
-              <input aria-label="Миқдор" type="number" inputMode="numeric" min="1" step="1" value={qty}
+              {t('Миқдор')}
+              <input aria-label={t('Миқдор')} type="number" inputMode="numeric" min="1" step="1" value={qty}
                 onChange={(e) => setQty(e.target.value)} />
             </label>
             <label className="field">
-              Нарх (барои 1 дона)
-              <input aria-label="Нарх" type="number" inputMode="decimal" min="0" step="0.01"
+              {t('Нарх (барои 1 дона)')}
+              <input aria-label={t('Нарх')} type="number" inputMode="decimal" min="0" step="0.01"
                 placeholder={selected ? String(priceOf(selected)) : ''} value={price}
                 onChange={(e) => setPrice(e.target.value)} />
             </label>
           </div>
-          <button type="button" className="btn btn-secondary" onClick={add}>＋ Илова ба рӯйхат</button>
+          <button type="button" className="btn btn-secondary" onClick={add}>{t('＋ Илова ба рӯйхат')}</button>
         </>
       )}
       {err && <div className="msg msg-error">{err}</div>}
@@ -80,14 +83,14 @@ export default function LineItems({ products, lines, onChange, mode }) {
                 <div className="record-sub">{l.quantity} × {money(l.unitPrice)}</div>
               </div>
               <div className="record-amount">{money(l.quantity * l.unitPrice)}</div>
-              <button type="button" className="icon-btn" aria-label="Тоза кардан"
-                onClick={() => onChange(lines.filter((_, i) => i !== idx))}>Нест</button>
+              <button type="button" className="icon-btn" aria-label={t('Тоза кардан')}
+                onClick={() => onChange(lines.filter((_, i) => i !== idx))}><Icon name="trash" size={18} /></button>
             </li>
           ))}
         </ul>
       )}
       {lines.length > 0 && (
-        <div className="list-total"><span>Ҷамъ</span><strong>{money(total)}</strong></div>
+        <div className="list-total"><span>{t('Ҷамъ')}</span><strong>{money(total)}</strong></div>
       )}
     </div>
   );

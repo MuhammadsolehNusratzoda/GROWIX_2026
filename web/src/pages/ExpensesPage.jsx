@@ -1,3 +1,5 @@
+import { useI18n } from '../i18n/index.jsx';
+import Icon from '../components/Icon.jsx';
 import { useState } from 'react';
 import {
   createExpense,
@@ -16,6 +18,7 @@ import RecordRow from '../components/RecordRow.jsx';
 import Message from '../components/Message.jsx';
 
 export default function ExpensesPage() {
+  const { t } = useI18n();
   const { year, month, shift, isCurrent } = usePeriod();
   const [form, setForm] = useState({ categoryId: '', amount: '', date: todayLocal(), note: '' });
   const [newCategory, setNewCategory] = useState('');
@@ -42,11 +45,11 @@ export default function ExpensesPage() {
     setMessage(null);
     const amount = Number(form.amount);
     if (!categoryId) {
-      setMessage({ type: 'error', text: 'Категорияро интихоб кунед' });
+      setMessage({ type: 'error', text: t('Категорияро интихоб кунед') });
       return;
     }
     if (!(amount > 0)) {
-      setMessage({ type: 'error', text: 'Маблағ бояд аз 0 зиёд бошад' });
+      setMessage({ type: 'error', text: t('Маблағ бояд аз 0 зиёд бошад') });
       return;
     }
     setSaving(true);
@@ -57,7 +60,7 @@ export default function ExpensesPage() {
         expenseDate: toApiDateTime(form.date),
         note: form.note.trim() || null,
       });
-      setMessage({ type: 'ok', text: 'Хароҷот сабт шуд' });
+      setMessage({ type: 'ok', text: t('Хароҷот сабт шуд') });
       setForm((f) => ({ ...f, amount: '', note: '' }));
       reload();
     } catch (err) {
@@ -77,14 +80,14 @@ export default function ExpensesPage() {
       setNewCategory('');
       setForm((f) => ({ ...f, categoryId: String(created.id) }));
       categories.reload();
-      setMessage({ type: 'ok', text: `Категорияи «${created.name}» илова шуд` });
+      setMessage({ type: 'ok', text: t('Категорияи «{name}» илова шуд', { name: created.name }) });
     } catch (err) {
       setMessage({ type: 'error', text: errorText(err) });
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Ин хароҷотро нест кунем?')) return;
+    if (!window.confirm(t('Ин хароҷотро нест кунем?'))) return;
     try {
       await deleteExpense(id);
       reload();
@@ -99,26 +102,26 @@ export default function ExpensesPage() {
     <>
       <section className="card">
         <form className="form" onSubmit={handleSubmit}>
-          <h3 className="card-title">Хароҷоти нав</h3>
+          <h3 className="card-title"><Icon name="plus" tone="green" />{t('Хароҷоти нав')}</h3>
 
           <label className="field">
-            Категория (Свет, Аренда, Маош, Барқ…)
+            {t('Категория (Свет, Аренда, Маош, Барқ…)')}
             <select name="categoryId" value={categoryId} onChange={setField('categoryId')}>
               {(categories.data ?? []).map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>{t(c.name)}</option>
               ))}
             </select>
           </label>
 
           <label className="field">
-            Маблағ (сомонӣ)
+            {t('Маблағ (сомонӣ)')}
             <input
               name="amount"
               type="number"
               inputMode="decimal"
               min="0"
               step="0.01"
-              placeholder="масалан 800"
+              placeholder={t('масалан 800')}
               value={form.amount}
               onChange={setField('amount')}
               required
@@ -126,62 +129,62 @@ export default function ExpensesPage() {
           </label>
 
           <label className="field">
-            Сана
+            {t('Сана')}
             <input name="date" type="date" value={form.date} onChange={setField('date')} required />
           </label>
 
           <label className="field">
-            Эзоҳ (ихтиёрӣ)
+            {t('Эзоҳ (ихтиёрӣ)')}
             <input name="note" type="text" maxLength="500" value={form.note} onChange={setField('note')} />
           </label>
 
           <Message message={message} />
           <button className="btn" type="submit" disabled={saving}>
-            {saving ? 'Сабт мешавад…' : 'Сабт кардан'}
+            {saving ? t('Сабт мешавад…') : t('Сабт кардан')}
           </button>
         </form>
 
         <details className="details">
-          <summary>＋ Категорияи нав</summary>
+          <summary>{t('＋ Категорияи нав')}</summary>
           <form className="inline-form" onSubmit={handleAddCategory}>
             <input
               name="newCategory"
               type="text"
               maxLength="100"
-              placeholder="масалан Интернет"
+              placeholder={t('масалан Интернет')}
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
             />
-            <button className="btn btn-small" type="submit">Илова</button>
+            <button className="btn btn-small" type="submit">{t('Илова')}</button>
           </form>
         </details>
       </section>
 
       <MonthSwitcher
-        title="Хароҷот"
+        title={t('Хароҷот')}
         label={monthTitle(year, month)}
         onPrev={() => shift(-1)}
         onNext={() => shift(1)}
         nextDisabled={isCurrent}
       />
 
-      {loading && <p className="state">Бор карда истодааст…</p>}
+      {loading && <p className="state">{t('Бор карда истодааст…')}</p>}
       {error && <div className="state state-error">{error}</div>}
 
       {!loading && !error && expenses && (
         <section className="card">
           <div className="list-total">
-            <span>Ҷамъ дар моҳ</span>
+            <span>{t('Ҷамъ дар моҳ')}</span>
             <strong>{money(total)}</strong>
           </div>
           {expenses.length === 0 ? (
-            <p className="empty">Дар ин моҳ хароҷот сабт нашудааст</p>
+            <p className="empty">{t('Дар ин моҳ хароҷот сабт нашудааст')}</p>
           ) : (
             <ul className="records">
               {expenses.map((x) => (
                 <RecordRow
                   key={x.id}
-                  title={x.categoryName}
+                  title={t(x.categoryName)}
                   subtitle={[formatDate(x.expenseDate), x.note].filter(Boolean).join(' · ')}
                   amount={money(x.amount)}
                   onDelete={() => handleDelete(x.id)}

@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx';
 import { useState } from 'react';
 import { deleteSale, getSales, errorText } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
@@ -10,6 +11,7 @@ import SaleForm from '../components/SaleForm.jsx';
 import Message from '../components/Message.jsx';
 
 export default function SalesPage({ isAdmin }) {
+  const { t } = useI18n();
   const { year, month, shift, isCurrent } = usePeriod();
   const [message, setMessage] = useState(null);
 
@@ -24,7 +26,7 @@ export default function SalesPage({ isAdmin }) {
   }, [year, month]);
 
   async function handleDelete(id) {
-    if (!window.confirm('Ин фурӯшро нест кунем?')) return;
+    if (!window.confirm(t('Ин фурӯшро нест кунем?'))) return;
     try {
       await deleteSale(id);
       reload();
@@ -40,7 +42,7 @@ export default function SalesPage({ isAdmin }) {
       <SaleForm onSaved={reload} />
 
       <MonthSwitcher
-        title="Фурӯш"
+        title={t('Фурӯш')}
         label={monthTitle(year, month)}
         onPrev={() => shift(-1)}
         onNext={() => shift(1)}
@@ -48,17 +50,17 @@ export default function SalesPage({ isAdmin }) {
       />
 
       <Message message={message} />
-      {loading && <p className="state">Бор карда истодааст…</p>}
+      {loading && <p className="state">{t('Бор карда истодааст…')}</p>}
       {error && <div className="state state-error">{error}</div>}
 
       {!loading && !error && sales && (
         <section className="card">
           <div className="list-total">
-            <span>Ҷамъ дар моҳ</span>
+            <span>{t('Ҷамъ дар моҳ')}</span>
             <strong>{money(total)}</strong>
           </div>
           {sales.length === 0 ? (
-            <p className="empty">Дар ин моҳ фурӯш сабт нашудааст</p>
+            <p className="empty">{t('Дар ин моҳ фурӯш сабт нашудааст')}</p>
           ) : (
             <ul className="records">
               {sales.map((s) => (

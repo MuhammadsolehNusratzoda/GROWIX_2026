@@ -1,3 +1,4 @@
+import { useI18n } from './i18n/index.jsx';
 import { useEffect, useState } from 'react';
 import LoginPage from './pages/LoginPage.jsx';
 import ReportPage from './pages/ReportPage.jsx';
@@ -11,9 +12,11 @@ import UsersPage from './pages/UsersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import BottomNav from './components/BottomNav.jsx';
 import { LOGO_SRC } from './logo.js';
+import LanguageSwitcher from './components/LanguageSwitcher.jsx';
 import { tokenStore, setAuthFailureHandler, logout } from './api.js';
 
 export default function App() {
+  const { t } = useI18n();
   const [user, setUser] = useState(() => (tokenStore.access ? tokenStore.user : null));
 
   // Агар session тамом шавад, ба саҳифаи login бармегардем
@@ -37,6 +40,7 @@ export default function App() {
 }
 
 function MainApp({ user, onLogout, onSessionEnded }) {
+  const { t } = useI18n();
   const isAdmin = Boolean(user.roles?.includes('Admin'));
 
   // Admin: ҳама чиз. Корманд (фурӯшанда): фурӯш, рӯйхати фирмаҳо, профил
@@ -49,13 +53,16 @@ function MainApp({ user, onLogout, onSessionEnded }) {
     <div className="app has-nav">
       <header className="topbar">
         <div className="topbar-brand">
-          <span className="topbar-logo"></span>
+          <img className="topbar-logo" src={LOGO_SRC} alt="GROWIX" />
           <div>
             <div className="topbar-title">GROWIX</div>
-            <div className="topbar-sub">{user.fullName} · {isAdmin ? 'Admin' : 'Фурӯшанда'}</div>
+            <div className="topbar-sub">{user.fullName} · {isAdmin ? 'Admin' : t('Фурӯшанда')}</div>
           </div>
         </div>
-        <button className="btn-ghost" onClick={onLogout}>Баромадан</button>
+        <div className="topbar-actions">
+          <LanguageSwitcher />
+          <button className="btn-ghost" onClick={onLogout}>{t('Баромадан')}</button>
+        </div>
       </header>
 
       {tab === 'report' && <ReportPage />}

@@ -243,3 +243,27 @@ body {
 .sold-box { margin-top: 6px; padding: 8px 10px; background: #f4f8f4; border-radius: 10px; font-size: 13px; }
 .sold-box .row { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
 .link-btn { background: none; border: 0; color: var(--green-900); text-decoration: underline; font-size: 13px; padding: 4px 0; cursor: pointer; }
+
+/* ---- SVG иконкаҳо ---- */
+.ic { display: inline-grid; place-items: center; border-radius: 12px; flex: none; vertical-align: middle; }
+.ic-plain { background: transparent; color: inherit; border-radius: 0; width: auto !important; height: auto !important; }
+.ic-green { background: #dcefd8; color: #15803d; }
+.ic-orange { background: #fde5d0; color: #c2410c; }
+.ic-blue { background: #dfe3fb; color: #4338ca; }
+.ic-yellow { background: #fbf1c7; color: #a16207; }
+.ic-red { background: #fee2e2; color: #b91c1c; }
+.card-title, .summary-label { display: flex; align-items: center; gap: 8px; }
+.card-title .ic { border-radius: 10px; }
+.nav-item .ic-plain svg { width: 22px; height: 22px; }
+.nav-item.active .ic-plain { color: var(--green-700); }
+.row .ic, .row-firm .ic { margin-right: 10px; }
+.row > span:first-child { display: inline-flex; align-items: center; }
+.profit { display: flex; align-items: flex-start; gap: 12px; }
+.icon-btn { display: inline-grid; place-items: center; }
+
+/* ---- Интихоби забон ---- */
+.lang-switch { display: inline-flex; background: rgba(255, 255, 255, 0.6); border-radius: 10px; padding: 2px; gap: 2px; }
+.lang-switch button { border: 0; background: transparent; padding: 5px 8px; font-size: 12px; font-weight: 700; color: #2f5d3a; border-radius: 8px; cursor: pointer; }
+.lang-switch button.active { background: var(--green-700); color: #fff; }
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.login-lang { align-self: center; margin-bottom: 14px; }

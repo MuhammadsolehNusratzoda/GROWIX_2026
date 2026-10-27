@@ -1,3 +1,4 @@
+import { tr } from './i18n/index.jsx';
 // Ҳамаи муоширати бо API дар як ҷо.
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8081').replace(/\/$/, '');
 
@@ -13,7 +14,7 @@ export class ApiError extends Error {
 
 export function errorText(err) {
   if (err?.errors?.length) return `${err.message}: ${err.errors.join(', ')}`;
-  return err?.message || 'Хатои номаълум';
+  return err?.message || tr('Хатои номаълум');
 }
 
 export const tokenStore = {
@@ -55,7 +56,7 @@ async function rawFetch(path, { method = 'GET', body, auth = true } = {}) {
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError('Ба сервер пайваст шуда нашуд. Оё API кор карда истодааст?');
+    throw new ApiError(tr('Ба сервер пайваст шуда нашуд. Оё API кор карда истодааст?'));
   }
 }
 
@@ -95,7 +96,7 @@ async function send(path, options = {}) {
     } else {
       tokenStore.clear();
       onAuthFailure();
-      throw new ApiError('Session ба охир расид. Дубора ворид шавед.', 401);
+      throw new ApiError(tr('Session ба охир расид. Дубора ворид шавед.'), 401);
     }
   }
 
@@ -107,7 +108,11 @@ async function send(path, options = {}) {
   }
 
   if (!res.ok || !json?.isSuccess) {
-    throw new ApiError(json?.message || `Хатои сервер (${res.status})`, res.status, json?.errors);
+    throw new ApiError(
+      json?.message ? tr(json.message) : `${tr('Хатои сервер')} (${res.status})`,
+      res.status,
+      json?.errors,
+    );
   }
   return json;
 }

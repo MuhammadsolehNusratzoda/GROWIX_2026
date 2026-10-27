@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/index.jsx';
 import { getSales } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
 import { dayRange, inRange, todayLocal, formatDate } from '../utils/dates.js';
@@ -6,6 +7,7 @@ import RecordRow from '../components/RecordRow.jsx';
 import SaleForm from '../components/SaleForm.jsx';
 
 export default function TodayPage() {
+  const { t } = useI18n();
   const today = todayLocal();
 
   const { data: sales, loading, error, reload } = useAsync(async () => {
@@ -23,21 +25,21 @@ export default function TodayPage() {
   return (
     <>
       <section className="card today-total">
-        <div className="today-label">Фурӯши имрӯза · {formatDate(`${today}T12:00:00+05:00`)}</div>
+        <div className="today-label">{t('Фурӯши имрӯза')} · {formatDate(`${today}T12:00:00+05:00`)}</div>
         <div className="today-amount">{money(total)}</div>
-        <div className="today-count">{sales ? `${sales.length} фурӯш` : '…'}</div>
+        <div className="today-count">{sales ? t('{n} фурӯш', { n: sales.length }) : '…'}</div>
       </section>
 
       <SaleForm showDate={false} onSaved={reload} />
 
-      {loading && !sales && <p className="state">Бор карда истодааст…</p>}
+      {loading && !sales && <p className="state">{t('Бор карда истодааст…')}</p>}
       {error && <div className="state state-error">{error}</div>}
 
       {sales && (
         <section className="card">
-          <h3 className="card-title">Фурӯшҳои имрӯза</h3>
+          <h3 className="card-title">{t('Фурӯшҳои имрӯза')}</h3>
           {sales.length === 0 ? (
-            <p className="empty">Имрӯз ҳанӯз фурӯш сабт нашудааст</p>
+            <p className="empty">{t('Имрӯз ҳанӯз фурӯш сабт нашудааст')}</p>
           ) : (
             <ul className="records">
               {sales.map((s) => (
