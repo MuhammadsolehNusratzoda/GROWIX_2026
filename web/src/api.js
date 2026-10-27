@@ -192,3 +192,9 @@ export const deleteFirmPayment = (id) => request(`/api/firm-payments/${id}`, { m
 export const registerUser = (body) => request('/api/auth/register', { method: 'POST', body });
 export const changePassword = (currentPassword, newPassword) =>
   request('/api/auth/change-password', { method: 'POST', body: { currentPassword, newPassword } });
+
+// ---------- Firm purchases (дору аз фирма гирифта шуд) + қарз ----------
+export const getFirmPurchases = (params) => requestPaged(`/api/firm-purchases${qs(params)}`);
+export const createFirmPurchase = (body) => request('/api/firm-purchases', { method: 'POST', body });
+export const deleteFirmPurchase = (id) => request(`/api/firm-purchases/${id}`, { method: 'DELETE' });
+export const getFirmBalances = () => request('/api/firm-balances');

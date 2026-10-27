@@ -2,9 +2,13 @@ import { useState } from 'react';
 import {
   createFirm,
   createFirmPayment,
+  createFirmPurchase,
   deleteFirm,
   deleteFirmPayment,
+  deleteFirmPurchase,
+  getFirmBalances,
   getFirmPayments,
+  getFirmPurchases,
   getFirms,
   errorText,
 } from '../api.js';
@@ -18,21 +22,246 @@ import Message from '../components/Message.jsx';
 
 const loadFirms = async () => (await getFirms({ PageSize: 100 })).items;
 
+const SECTIONS = [
+  { key: 'debts', label: 'Қарз' },
+  { key: 'purchases', label: 'Гирифтем' },
+  { key: 'payments', label: 'Пардохт' },
+  { key: 'firms', label: 'Фирмаҳо' },
+];
+
 export default function FirmsPage() {
-  const [section, setSection] = useState('payments');
+  const [section, setSection] = useState('debts');
 
   return (
     <>
       <div className="segmented">
-        <button className={section === 'payments' ? 'active' : ''} onClick={() => setSection('payments')}>
-          Пардохт ба фирма
-        </button>
-        <button className={section === 'firms' ? 'active' : ''} onClick={() => setSection('firms')}>
-          Рӯйхати фирмаҳо
-        </button>
+        {SECTIONS.map((s) => (
+          <button key={s.key} className={section === s.key ? 'active' : ''} onClick={() => setSection(s.key)}>
+            {s.label}
+          </button>
+        ))}
       </div>
 
-      {section === 'payments' ? <PaymentsSection /> : <FirmsSection />}
+      {section === 'debts' && <DebtsSection />}
+      {section === 'purchases' && <PurchasesSection />}
+      {section === 'payments' && <PaymentsSection />}
+      {section === 'firms' && <FirmsSection />}
+    </>
+  );
+}
+
+/* ---------------- Қарз ба фирмаҳо ---------------- */
+function debtLabel(debt) {
+  if (debt > 0) return { text: money(debt), cls: 'debt-red' };
+  if (debt < 0) return { text: `Пешпардохт ${money(-debt)}`, cls: 'green' };
+  return { text: 'Қарз нест', cls: 'green' };
+}
+
+function DebtsSection() {
+  const { data, loading, error } = useAsync(() => getFirmBalances(), []);
+
+  if (loading && !data) return <p className="state">Бор карда истодааст…</p>;
+  if (error) return <div className="state state-error">{error}</div>;
+  if (!data) return null;
+
+  const hasActivity = data.firms.some((f) => f.totalPurchased > 0 || f.totalPaid > 0);
+
+  return (
+    <>
+      <section className="card debt-total">
+        <div className="today-label">Қарзи умумӣ ба фирмаҳо</div>
+        <div className={`today-amount ${data.totalDebt > 0 ? 'debt-red' : ''}`}>{money(data.totalDebt)}</div>
+        <div className="today-count">Қарз = дору гирифтем − пардохт кардем</div>
+      </section>
+
+      <section className="card">
+        <h3 className="card-title">Қарз аз рӯи фирма</h3>
+        {data.firms.length === 0 ? (
+          <p className="empty">Фирма ҳанӯз нест. Аввал дар «Фирмаҳо» илова кунед.</p>
+        ) : (
+          <ul className="records">
+            {data.firms.map((f) => {
+              const d = debtLabel(f.debt);
+              return (
+                <RecordRow
+                  key={f.firmId}
+                  title={f.firmName}
+                  subtitle={`Гирифтем: ${money(f.totalPurchased)} · Додем: ${money(f.totalPaid)}`}
+                  amount={d.text}
+                  amountClass={d.cls}
+                />
+              );
+            })}
+          </ul>
+        )}
+        {!hasActivity && data.firms.length > 0 && (
+          <p className="hint">
+            Қарзро ҳисоб кардан учун дар «Гирифтем» сабт кунед, ки аз фирма чӣ қадар дору гирифтед.
+          </p>
+        )}
+      </section>
+    </>
+  );
+}
+
+/* ---------------- Дору аз фирма гирифтем ---------------- */
+function PurchasesSection() {
+  const { year, month, shift, isCurrent } = usePeriod();
+  const [form, setForm] = useState({ firmId: '', amount: '', date: todayLocal(), invoice: '', note: '' });
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const firms = useAsync(loadFirms, []);
+  const activeFirms = (firms.data ?? []).filter((f) => f.isActive);
+
+  const { data: purchases, loading, error, reload } = useAsync(async () => {
+    const range = monthRange(year, month);
+    const page = await getFirmPurchases({
+      From: range.from.toISOString(),
+      To: range.to.toISOString(),
+      PageSize: 100,
+    });
+    return page.items.filter((p) => inRange(p.purchaseDate, range));
+  }, [year, month]);
+
+  const firmId = form.firmId || String(activeFirms[0]?.id ?? '');
+  const setField = (name) => (e) => setForm((f) => ({ ...f, [name]: e.target.value }));
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setMessage(null);
+    const amount = Number(form.amount);
+    if (!firmId) {
+      setMessage({ type: 'error', text: 'Аввал фирмаро интихоб кунед' });
+      return;
+    }
+    if (!(amount > 0)) {
+      setMessage({ type: 'error', text: 'Маблағ бояд аз 0 зиёд бошад' });
+      return;
+    }
+    setSaving(true);
+    try {
+      await createFirmPurchase({
+        firmId: Number(firmId),
+        amount,
+        purchaseDate: toApiDateTime(form.date),
+        invoiceNumber: form.invoice.trim() || null,
+        note: form.note.trim() || null,
+      });
+      setMessage({ type: 'ok', text: 'Дору аз фирма сабт шуд ✓ (қарз зиёд шуд)' });
+      setForm((f) => ({ ...f, amount: '', invoice: '', note: '' }));
+      reload();
+    } catch (err) {
+      setMessage({ type: 'error', text: errorText(err) });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm('Ин харидро нест кунем?')) return;
+    try {
+      await deleteFirmPurchase(id);
+      reload();
+    } catch (err) {
+      setMessage({ type: 'error', text: errorText(err) });
+    }
+  }
+
+  const total = (purchases ?? []).reduce((sum, p) => sum + Number(p.amount), 0);
+
+  return (
+    <>
+      <form className="card form" onSubmit={handleSubmit}>
+        <h3 className="card-title">➕ Дору аз фирма гирифтем</h3>
+
+        {!firms.loading && activeFirms.length === 0 && (
+          <p className="empty">Фирма нест. Аввал дар «Фирмаҳо» фирма илова кунед.</p>
+        )}
+
+        <label className="field">
+          Фирма
+          <select name="firmId" value={firmId} onChange={setField('firmId')}>
+            {activeFirms.map((f) => (
+              <option key={f.id} value={f.id}>{f.name}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="field">
+          Маблағи дору (сомонӣ)
+          <input
+            name="amount"
+            type="number"
+            inputMode="decimal"
+            min="0"
+            step="0.01"
+            placeholder="масалан 100000"
+            value={form.amount}
+            onChange={setField('amount')}
+            required
+          />
+        </label>
+
+        <div className="field-row">
+          <label className="field">
+            Сана
+            <input name="date" type="date" value={form.date} onChange={setField('date')} required />
+          </label>
+          <label className="field">
+            Рақами накладной
+            <input name="invoice" type="text" maxLength="50" placeholder="ихтиёрӣ" value={form.invoice}
+              onChange={setField('invoice')} />
+          </label>
+        </div>
+
+        <label className="field">
+          Эзоҳ (ихтиёрӣ)
+          <input name="note" type="text" maxLength="500" value={form.note} onChange={setField('note')} />
+        </label>
+
+        <Message message={message} />
+        <button className="btn" type="submit" disabled={saving}>
+          {saving ? 'Сабт мешавад…' : 'Сабт кардан'}
+        </button>
+      </form>
+
+      <MonthSwitcher
+        title="Гирифтаҳо"
+        label={monthTitle(year, month)}
+        onPrev={() => shift(-1)}
+        onNext={() => shift(1)}
+        nextDisabled={isCurrent}
+      />
+
+      {loading && <p className="state">Бор карда истодааст…</p>}
+      {error && <div className="state state-error">{error}</div>}
+
+      {!loading && !error && purchases && (
+        <section className="card">
+          <div className="list-total">
+            <span>Ҷамъ дар моҳ</span>
+            <strong>{money(total)}</strong>
+          </div>
+          {purchases.length === 0 ? (
+            <p className="empty">Дар ин моҳ дору гирифта нашудааст</p>
+          ) : (
+            <ul className="records">
+              {purchases.map((p) => (
+                <RecordRow
+                  key={p.id}
+                  title={p.firmName}
+                  subtitle={[formatDate(p.purchaseDate), p.invoiceNumber && `№ ${p.invoiceNumber}`, p.note]
+                    .filter(Boolean)
+                    .join(' · ')}
+                  amount={money(p.amount)}
+                  onDelete={() => handleDelete(p.id)}
+                />
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
     </>
   );
 }

@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 {
     public DbSet<Firm> Firms => Set<Firm>();
     public DbSet<FirmPayment> FirmPayments => Set<FirmPayment>();
+    public DbSet<FirmPurchase> FirmPurchases => Set<FirmPurchase>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<ExpenseCategory> ExpenseCategories => Set<ExpenseCategory>();
     public DbSet<Expense> Expenses => Set<Expense>();

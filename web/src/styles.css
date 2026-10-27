@@ -232,3 +232,7 @@ body {
 .hint { margin: 0; font-size: 12px; color: var(--muted); }
 .profile-line { margin: 4px 0; }
 .muted { color: var(--muted); font-size: 14px; }
+
+/* ---------- debts ---------- */
+.debt-total { background: #fff7ed; text-align: center; padding: 20px 16px; }
+.debt-red { color: var(--red-700); }

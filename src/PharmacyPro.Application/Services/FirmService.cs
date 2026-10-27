@@ -8,7 +8,10 @@ using PharmacyPro.Domain.Entities;
 
 namespace PharmacyPro.Application.Services;
 
-public class FirmService(IRepository<Firm> repo) : IFirmService
+public class FirmService(
+    IRepository<Firm> repo,
+    IRepository<FirmPayment> paymentRepo,
+    IRepository<FirmPurchase> purchaseRepo) : IFirmService
 {
     public async Task<PagedResponse<FirmDto>> GetAllAsync(FirmFilter filter)
     {
@@ -61,6 +64,13 @@ public class FirmService(IRepository<Firm> repo) : IFirmService
     {
         var firm = await repo.GetByIdAsync(id);
         if (firm is null) return Response<bool>.Fail("Фирма ёфт нашуд", 404);
+
+        var hasHistory =
+            await paymentRepo.Query().AnyAsync(p => p.FirmId == id) ||
+            await purchaseRepo.Query().AnyAsync(p => p.FirmId == id);
+
+        if (hasHistory)
+            return Response<bool>.Fail("Фирма таърихи пардохт ё харид дорад, нест кардан мумкин нест", 409);
 
         await repo.DeleteAsync(firm);
         return Response<bool>.Success(true, "Фирма нест карда шуд");

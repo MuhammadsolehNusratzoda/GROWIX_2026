@@ -315,6 +315,50 @@ namespace PharmacyPro.Infrastructure.Data.Migrations
                     b.ToTable("FirmPayments");
                 });
 
+            modelBuilder.Entity("PharmacyPro.Domain.Entities.FirmPurchase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FirmId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("InvoiceNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FirmId");
+
+                    b.HasIndex("PurchaseDate");
+
+                    b.ToTable("FirmPurchases");
+                });
+
             modelBuilder.Entity("PharmacyPro.Domain.Entities.Sale", b =>
                 {
                     b.Property<int>("Id")
@@ -540,6 +584,17 @@ namespace PharmacyPro.Infrastructure.Data.Migrations
                 {
                     b.HasOne("PharmacyPro.Domain.Entities.Firm", "Firm")
                         .WithMany("Payments")
+                        .HasForeignKey("FirmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Firm");
+                });
+
+            modelBuilder.Entity("PharmacyPro.Domain.Entities.FirmPurchase", b =>
+                {
+                    b.HasOne("PharmacyPro.Domain.Entities.Firm", "Firm")
+                        .WithMany()
                         .HasForeignKey("FirmId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

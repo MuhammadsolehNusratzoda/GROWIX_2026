@@ -1,4 +1,4 @@
-import { getMonthlyReport, getWeeklySales } from '../api.js';
+import { getFirmBalances, getMonthlyReport, getWeeklySales } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
 import { usePeriod } from '../hooks/usePeriod.js';
 import { monthTitle, money } from '../utils/format.js';
@@ -8,6 +8,7 @@ import ExpensesCard from '../components/ExpensesCard.jsx';
 import ProfitBanner from '../components/ProfitBanner.jsx';
 import FirmSharesCard from '../components/FirmSharesCard.jsx';
 import WeeklyChart from '../components/WeeklyChart.jsx';
+import DebtCard from '../components/DebtCard.jsx';
 
 export default function ReportPage() {
   const { year, month, shift, isCurrent } = usePeriod();
@@ -22,6 +23,9 @@ export default function ReportPage() {
     },
     [year, month]
   );
+
+  // Қарз аз моҳ новобаста аст. Агар хато шавад, ҳисобот бетағйир кор мекунад.
+  const balances = useAsync(() => getFirmBalances(), []);
 
   const title = monthTitle(year, month);
   const report = data?.report;
@@ -44,6 +48,9 @@ export default function ReportPage() {
           />
           <ProfitBanner netProfit={report.netProfit} isLoss={report.isLoss} />
           <FirmSharesCard title={title} firms={report.firmShares} />
+          {balances.data && balances.data.firms.some((f) => f.totalPurchased > 0 || f.totalPaid > 0) && (
+            <DebtCard balances={balances.data} />
+          )}
           <WeeklyChart month={month} weeks={data.weeks} />
 
           <footer className="footer-bar">
