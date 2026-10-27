@@ -18,6 +18,9 @@ public static class DependencyInjection
         services.AddScoped<IFirmPaymentService, FirmPaymentService>();
         services.AddScoped<IFirmPurchaseService, FirmPurchaseService>();
         services.AddScoped<IFirmBalanceService, FirmBalanceService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IStockService, StockService>();
+        services.AddScoped<IFirmLedgerService, FirmLedgerService>();
         services.AddScoped<IReportService, ReportService>();
 
         return services;

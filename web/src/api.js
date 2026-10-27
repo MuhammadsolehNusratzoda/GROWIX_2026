@@ -198,3 +198,10 @@ export const getFirmPurchases = (params) => requestPaged(`/api/firm-purchases${q
 export const createFirmPurchase = (body) => request('/api/firm-purchases', { method: 'POST', body });
 export const deleteFirmPurchase = (id) => request(`/api/firm-purchases/${id}`, { method: 'DELETE' });
 export const getFirmBalances = () => request('/api/firm-balances');
+
+// ---------- Маҳсулотҳо (дору), анбор, фурӯши ҳар фирма ----------
+export const getProducts = (params) => requestPaged(`/api/products${qs(params)}`);
+export const createProduct = (body) => request('/api/products', { method: 'POST', body });
+export const deleteProduct = (id) => request(`/api/products/${id}`, { method: 'DELETE' });
+export const getStock = () => request('/api/stock');
+export const getFirmLedger = (firmId, params) => request(`/api/firm-ledger/${firmId}${qs(params)}`);

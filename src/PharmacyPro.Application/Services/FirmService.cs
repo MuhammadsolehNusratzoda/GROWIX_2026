@@ -11,7 +11,8 @@ namespace PharmacyPro.Application.Services;
 public class FirmService(
     IRepository<Firm> repo,
     IRepository<FirmPayment> paymentRepo,
-    IRepository<FirmPurchase> purchaseRepo) : IFirmService
+    IRepository<FirmPurchase> purchaseRepo,
+    IRepository<Product> productRepo) : IFirmService
 {
     public async Task<PagedResponse<FirmDto>> GetAllAsync(FirmFilter filter)
     {
@@ -67,10 +68,11 @@ public class FirmService(
 
         var hasHistory =
             await paymentRepo.Query().AnyAsync(p => p.FirmId == id) ||
-            await purchaseRepo.Query().AnyAsync(p => p.FirmId == id);
+            await purchaseRepo.Query().AnyAsync(p => p.FirmId == id) ||
+            await productRepo.Query().AnyAsync(p => p.FirmId == id);
 
         if (hasHistory)
-            return Response<bool>.Fail("Фирма таърихи пардохт ё харид дорад, нест кардан мумкин нест", 409);
+            return Response<bool>.Fail("Фирма таърихи пардохт, харид ё маҳсулот дорад, нест кардан мумкин нест", 409);
 
         await repo.DeleteAsync(firm);
         return Response<bool>.Success(true, "Фирма нест карда шуд");

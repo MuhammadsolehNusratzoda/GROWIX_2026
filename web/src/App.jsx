@@ -6,6 +6,7 @@ import SalesPage from './pages/SalesPage.jsx';
 import ExpensesPage from './pages/ExpensesPage.jsx';
 import FirmsPage from './pages/FirmsPage.jsx';
 import FirmsViewPage from './pages/FirmsViewPage.jsx';
+import ProductsPage from './pages/ProductsPage.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import BottomNav from './components/BottomNav.jsx';
@@ -39,7 +40,7 @@ function MainApp({ user, onLogout, onSessionEnded }) {
 
   // Admin: ҳама чиз. Корманд (Pharmacist): фурӯш, рӯйхати фирмаҳо, профил
   const tabs = isAdmin
-    ? ['report', 'sales', 'expenses', 'firms', 'users']
+    ? ['report', 'sales', 'expenses', 'firms', 'products', 'users']
     : ['today', 'sales', 'firms', 'profile'];
   const [tab, setTab] = useState(tabs[0]);
 
@@ -61,6 +62,7 @@ function MainApp({ user, onLogout, onSessionEnded }) {
       {tab === 'sales' && <SalesPage isAdmin={isAdmin} />}
       {tab === 'expenses' && <ExpensesPage />}
       {tab === 'firms' && (isAdmin ? <FirmsPage /> : <FirmsViewPage />)}
+      {tab === 'products' && <ProductsPage />}
       {tab === 'users' && <UsersPage onSessionEnded={onSessionEnded} />}
       {tab === 'profile' && <ProfilePage user={user} onSessionEnded={onSessionEnded} />}
 

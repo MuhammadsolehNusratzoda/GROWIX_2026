@@ -9,6 +9,8 @@ import {
   getFirmBalances,
   getFirmPayments,
   getFirmPurchases,
+  getFirmLedger,
+  getProducts,
   getFirms,
   errorText,
 } from '../api.js';
@@ -19,6 +21,7 @@ import { METHODS, METHOD_LABELS, money, monthTitle } from '../utils/format.js';
 import MonthSwitcher from '../components/MonthSwitcher.jsx';
 import RecordRow from '../components/RecordRow.jsx';
 import Message from '../components/Message.jsx';
+import LineItems from '../components/LineItems.jsx';
 
 const loadFirms = async () => (await getFirms({ PageSize: 100 })).items;
 
@@ -71,7 +74,7 @@ function DebtsSection() {
       <section className="card debt-total">
         <div className="today-label">Қарзи умумӣ ба фирмаҳо</div>
         <div className={`today-amount ${data.totalDebt > 0 ? 'debt-red' : ''}`}>{money(data.totalDebt)}</div>
-        <div className="today-count">Қарз = дору гирифтем − пардохт кардем</div>
+        <div className="today-count">Қарз = дору гирифтем − пардохт кардем. Фурӯш қарзро худкор кам намекунад.</div>
       </section>
 
       <section className="card">
@@ -83,13 +86,7 @@ function DebtsSection() {
             {data.firms.map((f) => {
               const d = debtLabel(f.debt);
               return (
-                <RecordRow
-                  key={f.firmId}
-                  title={f.firmName}
-                  subtitle={`Гирифтем: ${money(f.totalPurchased)} · Додем: ${money(f.totalPaid)}`}
-                  amount={d.text}
-                  amountClass={d.cls}
-                />
+                <FirmDebtRow key={f.firmId} f={f} d={d} />
               );
             })}
           </ul>
@@ -104,12 +101,52 @@ function DebtsSection() {
   );
 }
 
+// Як сатри фирма: қарз + фурӯши маҳсулоти ҳамин фирма (қарзро худкор кам намекунад)
+function FirmDebtRow({ f, d }) {
+  const [open, setOpen] = useState(false);
+  const ledger = useAsync(() => (open ? getFirmLedger(f.firmId) : Promise.resolve(null)), [open]);
+
+  return (
+    <>
+      <RecordRow
+        title={f.firmName}
+        subtitle={`Гирифтем: ${money(f.totalPurchased)} · Додем: ${money(f.totalPaid)} · Фурӯхта шуд: ${money(f.totalSold)}`}
+        amount={d.text}
+        amountClass={d.cls}
+      />
+      <li className="record" style={{ display: 'block' }}>
+        {f.soldNotPaid > 0 && (
+          <div className="hint">Аз фурӯши ин фирма ба фирма ҳоло надодаем: <strong>{money(f.soldNotPaid)}</strong></div>
+        )}
+        <button type="button" className="link-btn" onClick={() => setOpen((o) => !o)}>
+          {open ? 'Пинҳон кардан' : 'Кадом доруҳо фурӯхта шуд?'}
+        </button>
+        {open && ledger.loading && <p className="state">Бор карда истодааст…</p>}
+        {open && ledger.error && <div className="state state-error">{ledger.error}</div>}
+        {open && ledger.data && (
+          <div className="sold-box">
+            {ledger.data.items.length === 0 && <div>Аз ин фирма ҳанӯз чизе фурӯхта нашудааст</div>}
+            {ledger.data.items.map((i) => (
+              <div className="row" key={i.productId}>
+                <span>{i.productName} × {i.quantity}</span>
+                <strong>{money(i.amount)}</strong>
+              </div>
+            ))}
+          </div>
+        )}
+      </li>
+    </>
+  );
+}
+
 /* ---------------- Дору аз фирма гирифтем ---------------- */
 function PurchasesSection() {
   const { year, month, shift, isCurrent } = usePeriod();
   const [form, setForm] = useState({ firmId: '', amount: '', date: todayLocal(), invoice: '', note: '' });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
+  const [withProducts, setWithProducts] = useState(true);
+  const [lines, setLines] = useState([]);
 
   const firms = useAsync(loadFirms, []);
   const activeFirms = (firms.data ?? []).filter((f) => f.isActive);
@@ -127,6 +164,11 @@ function PurchasesSection() {
   const firmId = form.firmId || String(activeFirms[0]?.id ?? '');
   const setField = (name) => (e) => setForm((f) => ({ ...f, [name]: e.target.value }));
 
+  const firmProducts = useAsync(
+    async () => (firmId ? (await getProducts({ FirmId: firmId, IsActive: true, PageSize: 200 })).items : []),
+    [firmId],
+  );
+
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage(null);
@@ -135,7 +177,11 @@ function PurchasesSection() {
       setMessage({ type: 'error', text: 'Аввал фирмаро интихоб кунед' });
       return;
     }
-    if (!(amount > 0)) {
+    if (withProducts && lines.length === 0) {
+      setMessage({ type: 'error', text: 'Ақаллан як доруро ба рӯйхат илова кунед' });
+      return;
+    }
+    if (!withProducts && !(amount > 0)) {
       setMessage({ type: 'error', text: 'Маблағ бояд аз 0 зиёд бошад' });
       return;
     }
@@ -143,13 +189,17 @@ function PurchasesSection() {
     try {
       await createFirmPurchase({
         firmId: Number(firmId),
-        amount,
+        amount: withProducts ? 0 : amount,
+        items: withProducts
+          ? lines.map((l) => ({ productId: l.productId, quantity: l.quantity, unitCost: l.unitPrice }))
+          : undefined,
         purchaseDate: toApiDateTime(form.date),
         invoiceNumber: form.invoice.trim() || null,
         note: form.note.trim() || null,
       });
       setMessage({ type: 'ok', text: 'Дору аз фирма сабт шуд ✓ (қарз зиёд шуд)' });
       setForm((f) => ({ ...f, amount: '', invoice: '', note: '' }));
+      setLines([]);
       reload();
     } catch (err) {
       setMessage({ type: 'error', text: errorText(err) });
@@ -181,27 +231,35 @@ function PurchasesSection() {
 
         <label className="field">
           Фирма
-          <select name="firmId" value={firmId} onChange={setField('firmId')}>
+          <select name="firmId" value={firmId} onChange={(e) => { setLines([]); setField('firmId')(e); }}>
             {activeFirms.map((f) => (
               <option key={f.id} value={f.id}>{f.name}</option>
             ))}
           </select>
         </label>
 
-        <label className="field">
-          Маблағи дору (сомонӣ)
-          <input
-            name="amount"
-            type="number"
-            inputMode="decimal"
-            min="0"
-            step="0.01"
-            placeholder="масалан 100000"
-            value={form.amount}
-            onChange={setField('amount')}
-            required
-          />
-        </label>
+        <div className="segmented">
+          <button type="button" className={withProducts ? 'active' : ''} onClick={() => setWithProducts(true)}>Бо дору</button>
+          <button type="button" className={!withProducts ? 'active' : ''} onClick={() => setWithProducts(false)}>Танҳо маблағ</button>
+        </div>
+
+        {withProducts ? (
+          <LineItems products={firmProducts.data ?? []} lines={lines} onChange={setLines} mode="purchase" />
+        ) : (
+          <label className="field">
+            Маблағи дору (сомонӣ)
+            <input
+              name="amount"
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.01"
+              placeholder="масалан 100000"
+              value={form.amount}
+              onChange={setField('amount')}
+            />
+          </label>
+        )}
 
         <div className="field-row">
           <label className="field">
@@ -251,7 +309,8 @@ function PurchasesSection() {
                 <RecordRow
                   key={p.id}
                   title={p.firmName}
-                  subtitle={[formatDate(p.purchaseDate), p.invoiceNumber && `№ ${p.invoiceNumber}`, p.note]
+                  subtitle={[formatDate(p.purchaseDate), p.invoiceNumber && `№ ${p.invoiceNumber}`,
+                    p.items?.length ? p.items.map((i) => `${i.productName} ×${i.quantity}`).join(', ') : null, p.note]
                     .filter(Boolean)
                     .join(' · ')}
                   amount={money(p.amount)}
@@ -289,6 +348,11 @@ function PaymentsSection() {
   const firmId = form.firmId || String(activeFirms[0]?.id ?? '');
   const setField = (name) => (e) => setForm((f) => ({ ...f, [name]: e.target.value }));
 
+  const firmProducts = useAsync(
+    async () => (firmId ? (await getProducts({ FirmId: firmId, IsActive: true, PageSize: 200 })).items : []),
+    [firmId],
+  );
+
   async function handleSubmit(e) {
     e.preventDefault();
     setMessage(null);
@@ -297,7 +361,11 @@ function PaymentsSection() {
       setMessage({ type: 'error', text: 'Аввал фирмаро интихоб кунед' });
       return;
     }
-    if (!(amount > 0)) {
+    if (withProducts && lines.length === 0) {
+      setMessage({ type: 'error', text: 'Ақаллан як доруро ба рӯйхат илова кунед' });
+      return;
+    }
+    if (!withProducts && !(amount > 0)) {
       setMessage({ type: 'error', text: 'Маблағ бояд аз 0 зиёд бошад' });
       return;
     }
@@ -343,7 +411,7 @@ function PaymentsSection() {
 
         <label className="field">
           Фирма
-          <select name="firmId" value={firmId} onChange={setField('firmId')}>
+          <select name="firmId" value={firmId} onChange={(e) => { setLines([]); setField('firmId')(e); }}>
             {activeFirms.map((f) => (
               <option key={f.id} value={f.id}>{f.name}</option>
             ))}

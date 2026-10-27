@@ -4,6 +4,7 @@ const LABELS = {
   sales: { icon: '💰', text: 'Фурӯш' },
   expenses: { icon: '🧾', text: 'Хароҷот' },
   firms: { icon: '🏢', text: 'Фирмаҳо' },
+  products: { icon: '💊', text: 'Дору' },
   users: { icon: '👥', text: 'Корбарон' },
   profile: { icon: '👤', text: 'Профил' },
 };

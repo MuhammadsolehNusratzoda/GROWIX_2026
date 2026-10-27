@@ -236,3 +236,10 @@ body {
 /* ---------- debts ---------- */
 .debt-total { background: #fff7ed; text-align: center; padding: 20px 16px; }
 .debt-red { color: var(--red-700); }
+
+/* ---- Маҳсулот / анбор ---- */
+.btn-secondary { background: #fff; color: var(--green-900); border: 1px solid #b7cdb7; }
+.lines { display: flex; flex-direction: column; gap: 10px; }
+.sold-box { margin-top: 6px; padding: 8px 10px; background: #f4f8f4; border-radius: 10px; font-size: 13px; }
+.sold-box .row { display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; }
+.link-btn { background: none; border: 0; color: var(--green-900); text-decoration: underline; font-size: 13px; padding: 4px 0; cursor: pointer; }
